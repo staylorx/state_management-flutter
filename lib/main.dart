@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<Data>(
-      builder: (context) => Data(),
+      create: (context) {
+        return Data();
+      },
       child: MaterialApp(
         home: Scaffold(
           appBar: AppBar(
-            title: MyText(),
+            title: const MyText(),
           ),
-          body: Level1(),
+          body: const Level1(),
         ),
       ),
     );
@@ -21,19 +27,24 @@ class MyApp extends StatelessWidget {
 }
 
 class Level1 extends StatelessWidget {
+  const Level1({super.key});
+
   @override
   Widget build(BuildContext context) {
+    // ignore: avoid_unnecessary_containers
     return Container(
-      child: Level2(),
+      child: const Level2(),
     );
   }
 }
 
 class Level2 extends StatelessWidget {
+  const Level2({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: const [
         MyTextField(),
         Level3(),
       ],
@@ -42,6 +53,8 @@ class Level2 extends StatelessWidget {
 }
 
 class Level3 extends StatelessWidget {
+  const Level3({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Text(Provider.of<Data>(context).data);
@@ -49,6 +62,8 @@ class Level3 extends StatelessWidget {
 }
 
 class MyText extends StatelessWidget {
+  const MyText({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Text(Provider.of<Data>(context, listen: false).data);
@@ -56,6 +71,8 @@ class MyText extends StatelessWidget {
 }
 
 class MyTextField extends StatelessWidget {
+  const MyTextField({super.key});
+
   @override
   Widget build(BuildContext context) {
     return TextField(
