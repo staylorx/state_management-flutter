@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:state_management/screens/tasks_screen.dart';
+import 'package:state_management/utilties/log_printer.dart';
+
+final logger = Logger(printer: MyLogfmtPrinter('main'));
 
 void main() {
   runApp(const MyApp());
@@ -14,13 +19,8 @@ class MyApp extends StatelessWidget {
       create: (context) {
         return Data();
       },
-      child: MaterialApp(
-        home: Scaffold(
-          appBar: AppBar(
-            title: const MyText(),
-          ),
-          body: const Level1(),
-        ),
+      child: const MaterialApp(
+        home: TasksScreen(),
       ),
     );
   }
