@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:state_management/components/add_task_screen.dart';
+import 'package:state_management/models/task.dart';
 import 'package:state_management/utilties/constants.dart';
 
 import 'package:state_management/utilties/log_printer.dart';
@@ -10,8 +11,19 @@ import 'package:state_management/components/tasks_list.dart';
 
 final logger = Logger(printer: MyLogfmtPrinter('tasks_screen'));
 
-class TasksScreen extends StatelessWidget {
+class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
+
+  @override
+  State<TasksScreen> createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
+  List<Task> tasks = [
+    Task(name: 'Buy milk'),
+    Task(name: 'Buy eggs'),
+    Task(name: 'Buy bread'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -22,15 +34,23 @@ class TasksScreen extends StatelessWidget {
         child: const Icon(Icons.add),
         onPressed: () {
           logger.d('FAB pressed.');
+
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
             builder: (container) => SingleChildScrollView(
               child: Container(
-                  padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
-                  child: AddTaskScreen()),
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: AddTaskScreen(addTaskCallback: (newTaskTitle) {
+                  logger.d('Received $newTaskTitle');
+                  setState(() {
+                    tasks.add(Task(name: newTaskTitle));
+                  });
+                  Navigator.pop(context);
+                }),
+              ),
             ),
           ); //end showModalBottomSheet()
         },
@@ -43,7 +63,7 @@ class TasksScreen extends StatelessWidget {
                 top: 60.0, left: 30.0, right: 30.0, bottom: 30.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
+              children: <Widget>[
                 CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 30.0,
@@ -58,7 +78,7 @@ class TasksScreen extends StatelessWidget {
                 ),
                 Text('Todoey', style: kTitleTextStyle),
                 Text(
-                  '12 Tasks',
+                  '${tasks.length} Tasks',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18.0,
@@ -77,7 +97,7 @@ class TasksScreen extends StatelessWidget {
                   topRight: Radius.circular(15.0),
                 ),
               ),
-              child: TasksList(),
+              child: TasksList(tasks: tasks),
             ),
           ),
         ],

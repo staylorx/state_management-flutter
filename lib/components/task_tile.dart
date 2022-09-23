@@ -5,65 +5,32 @@ import 'package:state_management/utilties/log_printer.dart';
 
 final logger = Logger(printer: MyLogfmtPrinter('task_tile'));
 
-class TaskTile extends StatefulWidget {
+class TaskTile extends StatelessWidget {
   final String taskTitle;
   final bool isChecked;
+  final Function(bool?) checkboxCallback;
 
   const TaskTile({
     Key? key,
     required this.taskTitle,
     required this.isChecked,
+    required this.checkboxCallback,
   }) : super(key: key);
-
-  @override
-  State<TaskTile> createState() => _TaskTileState();
-}
-
-class _TaskTileState extends State<TaskTile> {
-  bool isChecked = false;
-
-  void checkboxCallback(bool? checkboxState) {
-    if (checkboxState != null) {
-      setState(() {
-        logger.d('setting state with $checkboxState');
-        isChecked = checkboxState;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(
-        widget.taskTitle,
+        taskTitle,
         style: TextStyle(
           decoration: isChecked ? TextDecoration.lineThrough : null,
         ),
       ),
-      trailing: TaskCheckbox(
-        checkboxState: isChecked,
-        toggleCheckboxState: checkboxCallback,
+      trailing: Checkbox(
+        activeColor: Colors.lightBlueAccent,
+        value: isChecked,
+        onChanged: checkboxCallback,
       ),
-    );
-  }
-}
-
-class TaskCheckbox extends StatelessWidget {
-  final bool checkboxState;
-  final Function(bool?) toggleCheckboxState;
-
-  const TaskCheckbox({
-    super.key,
-    required this.checkboxState,
-    required this.toggleCheckboxState,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Checkbox(
-      activeColor: Colors.lightBlueAccent,
-      value: checkboxState,
-      onChanged: toggleCheckboxState,
     );
   }
 }
