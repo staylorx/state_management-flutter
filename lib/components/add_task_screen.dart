@@ -1,23 +1,36 @@
 // ignore_for_file: prefer_const_constructors
 
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
+// Package imports:
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+
+// Project imports:
+import 'package:state_management/models/task_data.dart';
 import 'package:state_management/utilties/log_printer.dart';
 
 final logger = Logger(printer: MyLogfmtPrinter('add_task_screen'));
 
-class AddTaskScreen extends StatelessWidget {
-  //TODO not convinced this works with stateless
+class AddTaskScreen extends StatefulWidget {
+  const AddTaskScreen({super.key});
 
-  final Function addTaskCallback;
+  @override
+  State<AddTaskScreen> createState() => _AddTaskScreenState();
+}
 
-  const AddTaskScreen({super.key, required this.addTaskCallback});
+class _AddTaskScreenState extends State<AddTaskScreen> {
+  final textEditingController = TextEditingController();
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String newTaskTitle = '';
-
     return Container(
       color: const Color(0xFF757575),
       child: Container(
@@ -41,12 +54,15 @@ class AddTaskScreen extends StatelessWidget {
               TextField(
                 autofocus: true,
                 textAlign: TextAlign.center,
-                onChanged: (value) {
-                  newTaskTitle = value;
-                },
+                controller: textEditingController,
               ),
               TextButton(
-                onPressed: () => addTaskCallback(newTaskTitle),
+                onPressed: () {
+                  String newTaskTitle = textEditingController.text;
+                  Provider.of<TaskData>(context, listen: false)
+                      .addTask(name: newTaskTitle);
+                  Navigator.pop(context);
+                },
                 child: Text(
                   "Add",
                   style: TextStyle(

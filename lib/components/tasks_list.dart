@@ -1,38 +1,40 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:state_management/components/task_tile.dart';
-import 'package:state_management/models/task.dart';
 
-class TasksList extends StatefulWidget {
-  final List<Task> tasks;
+// Package imports:
+import 'package:provider/provider.dart';
+
+// Project imports:
+import 'package:state_management/components/task_tile.dart';
+import 'package:state_management/models/task_data.dart';
+
+class TasksList extends StatelessWidget {
   const TasksList({
     Key? key,
-    required this.tasks,
   }) : super(key: key);
 
   @override
-  State<TasksList> createState() => _TasksListState();
-}
-
-class _TasksListState extends State<TasksList> {
-  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return TaskTile(
-            taskTitle: widget.tasks[index].name,
-            isChecked: widget.tasks[index].isDone,
-            checkboxCallback: (checkboxState) {
-              if (checkboxState != null) {
-                setState(() {
-                  logger.d('setting state with $checkboxState');
-                  widget.tasks[index].toggleDone();
+    return Consumer<TaskData>(
+      builder: (context, taskData, child) {
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            final task = taskData.tasks[index];
+            return TaskTile(
+                taskTitle: task.name,
+                isChecked: task.isDone,
+                checkboxCallback: (checkboxState) {
+                  if (checkboxState != null) {
+                    taskData.toggleDone(task: task);
+                  }
+                },
+                longPressCallback: () {
+                  taskData.deleteTask(task: task);
                 });
-              }
-            });
+          },
+          itemCount: taskData.size,
+        );
       },
-      itemCount: widget.tasks.length,
     );
   }
 }

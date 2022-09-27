@@ -1,29 +1,23 @@
 // ignore_for_file: prefer_const_constructors
 
+// Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:state_management/components/add_task_screen.dart';
-import 'package:state_management/models/task.dart';
-import 'package:state_management/utilties/constants.dart';
 
-import 'package:state_management/utilties/log_printer.dart';
+// Package imports:
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
+
+// Project imports:
+import 'package:state_management/components/add_task_screen.dart';
 import 'package:state_management/components/tasks_list.dart';
+import 'package:state_management/models/task_data.dart';
+import 'package:state_management/utilties/constants.dart';
+import 'package:state_management/utilties/log_printer.dart';
 
 final logger = Logger(printer: MyLogfmtPrinter('tasks_screen'));
 
-class TasksScreen extends StatefulWidget {
+class TasksScreen extends StatelessWidget {
   const TasksScreen({super.key});
-
-  @override
-  State<TasksScreen> createState() => _TasksScreenState();
-}
-
-class _TasksScreenState extends State<TasksScreen> {
-  List<Task> tasks = [
-    Task(name: 'Buy milk'),
-    Task(name: 'Buy eggs'),
-    Task(name: 'Buy bread'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -43,13 +37,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: AddTaskScreen(addTaskCallback: (newTaskTitle) {
-                  logger.d('Received $newTaskTitle');
-                  setState(() {
-                    tasks.add(Task(name: newTaskTitle));
-                  });
-                  Navigator.pop(context);
-                }),
+                child: AddTaskScreen(),
               ),
             ),
           ); //end showModalBottomSheet()
@@ -78,7 +66,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 ),
                 Text('Todoey', style: kTitleTextStyle),
                 Text(
-                  '${tasks.length} Tasks',
+                  '${Provider.of<TaskData>(context).size} Tasks',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18.0,
@@ -97,7 +85,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   topRight: Radius.circular(15.0),
                 ),
               ),
-              child: TasksList(tasks: tasks),
+              child: TasksList(),
             ),
           ),
         ],
